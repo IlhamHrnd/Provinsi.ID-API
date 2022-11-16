@@ -90,7 +90,7 @@ namespace RestAPIProvinsiID.Controllers
             }
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult<List<UserModel>>> AddUser(UserModel userModel)
         {
             var _ok = new OkResult();
@@ -217,6 +217,6 @@ namespace RestAPIProvinsiID.Controllers
 
                 return Ok(jsonString);
             }
-        }
+        }*/
     }
 }
