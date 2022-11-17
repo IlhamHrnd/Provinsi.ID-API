@@ -10,7 +10,7 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>RestAPIProvinsiID.Data.Datacontext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
-    <NameOfLastUsedPublishProfile>ProvinsiID - Web Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>E:\Project\Provinsi.ID-API\RestAPIProvinsiID\Properties\PublishProfiles\RestAPIProvinsiID - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_DbContextDialogWidth>650</WebStackScaffolding_DbContextDialogWidth>
   </PropertyGroup>
 </Project>

@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using RestAPIProvinsiID.Data;
 using RestAPIProvinsiID.Models;
@@ -11,7 +13,11 @@ namespace RestAPIProvinsiID.Controllers
     public class UserController : ControllerBase
     {
         private readonly Datacontext _datacontext;
-        private readonly JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+        private readonly JsonSerializerOptions options = new JsonSerializerOptions
+        { 
+            WriteIndented = true,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        };
 
         public UserController(Datacontext datacontext)
         {
@@ -22,12 +28,14 @@ namespace RestAPIProvinsiID.Controllers
         public async Task<ActionResult<List<UserModel>>> GetAllUser()
         {
             var _ok = new OkResult();
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            var result = new Result
+            var result = new UserResult
             {
                 Code = _ok.StatusCode,
                 Message = _ok.GetType().Name,
-                userModels = await _datacontext.User.ToListAsync()
+                userModels = await _datacontext.User
+                    .Include(u => u.GetAkses)
+                    .Include(a => a.GetStatus)
+                    .ToListAsync()
             };
 
             string jsonString = JsonSerializer.Serialize(result, options);
@@ -44,7 +52,7 @@ namespace RestAPIProvinsiID.Controllers
 
             if (user == null)
             {
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _notfound.StatusCode,
                     Message = _notfound.GetType().Name,
@@ -52,11 +60,21 @@ namespace RestAPIProvinsiID.Controllers
                     {
                         new UserModel
                         {
-                            Username = "",
-                            Password = "",
+                            Username = string.Empty,
+                            Password = string.Empty,
                             Akses = 0,
-                            Email = "",
-                            Status = 0
+                            GetAkses = new AksesModel
+                            {
+                                ID = 0,
+                                Level = string.Empty
+                            },
+                            Email = string.Empty,
+                            Status = 0,
+                            GetStatus = new StatusModel
+                            {
+                                ID = 0,
+                                Name = string.Empty
+                            }
                         }
                     }
                 };
@@ -67,7 +85,7 @@ namespace RestAPIProvinsiID.Controllers
             }
             else
             {
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _ok.StatusCode,
                     Message = _ok.GetType().Name,
@@ -78,8 +96,20 @@ namespace RestAPIProvinsiID.Controllers
                             Username = user.Username,
                             Password = user.Password,
                             Akses = user.Akses,
+                            GetAkses = new AksesModel
+                            {
+                                //Data masih belum valid
+                                ID = 1,
+                                Level = string.Empty
+                            },
                             Email = user.Email,
-                            Status = user.Status
+                            Status = user.Status,
+                            GetStatus = new StatusModel
+                            {
+                                //Data masih belum valid
+                                ID = 1,
+                                Name = string.Empty
+                            }
                         }
                     }
                 };
@@ -97,7 +127,7 @@ namespace RestAPIProvinsiID.Controllers
             _datacontext.User.Add(userModel);
             await _datacontext.SaveChangesAsync();
 
-            var result = new Result
+            var result = new UserResult
             {
                 Code = _ok.StatusCode,
                 Message = _ok.GetType().Name,
@@ -118,7 +148,7 @@ namespace RestAPIProvinsiID.Controllers
             
             if (user == null)
             {
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _notfound.StatusCode,
                     Message = _notfound.GetType().Name,
@@ -148,7 +178,7 @@ namespace RestAPIProvinsiID.Controllers
 
                 await _datacontext.SaveChangesAsync();
 
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _ok.StatusCode,
                     Message = _ok.GetType().Name,
@@ -181,7 +211,7 @@ namespace RestAPIProvinsiID.Controllers
             
             if (user == null)
             {
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _notfound.StatusCode,
                     Message = _notfound.GetType().Name,
@@ -206,7 +236,7 @@ namespace RestAPIProvinsiID.Controllers
             {
                 _datacontext.User.Remove(user);
                 await _datacontext.SaveChangesAsync();
-                var result = new Result
+                var result = new UserResult
                 {
                     Code = _ok.StatusCode,
                     Message = _ok.GetType().Name,

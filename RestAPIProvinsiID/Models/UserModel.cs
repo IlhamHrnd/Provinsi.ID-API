@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RestAPIProvinsiID.Models
 {
@@ -8,11 +9,15 @@ namespace RestAPIProvinsiID.Models
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public int Akses { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public AksesModel? GetAkses { get; set; }
         public string Email { get; set; } = string.Empty;
         public int Status { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public StatusModel? GetStatus { get; set; }
     }
 
-    public class Result
+    public class UserResult
     {
         public int Code { get; set;}
         public string Message { get; set;} = string.Empty;

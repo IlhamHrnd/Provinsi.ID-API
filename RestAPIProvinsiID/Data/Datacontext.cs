@@ -23,6 +23,21 @@ namespace RestAPIProvinsiID.Data
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //Foreign Key Tabel User dan Akses
+            modelBuilder.Entity<UserModel>()
+                .HasOne(a => a.GetAkses)
+                .WithOne(u => u.GetUser)
+                .HasForeignKey<UserModel>(a => a.Akses);
+
+            //Foreign Key Tabel User dan Status
+            modelBuilder.Entity<UserModel>()
+                .HasOne(s => s.GetStatus)
+                .WithOne(u => u.GetUser)
+                .HasForeignKey<UserModel>(s => s.Status);
+        }
+
         /*public virtual DbSet<AksesModel> Akses { get; set; } = null!;
         public virtual DbSet<UserModel> User { get; set; } = null!;
         public virtual DbSet<StatusModel> Status { get; set; } = null!;
