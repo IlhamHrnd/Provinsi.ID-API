@@ -15,6 +15,9 @@ namespace RestAPIProvinsiID.Data
         public virtual DbSet<UserModel> User { get; set; } = null!;
         public virtual DbSet<AksesModel> Akses { get; set; } = null!;
         public virtual DbSet<StatusModel> Status { get; set; } = null!;
+        public virtual DbSet<AnggotaModel> Anggota { get; set; } = null!;
+        public virtual DbSet<GenderModel> Gender { get; set; } = null!;
+        public virtual DbSet<PekerjaanModel> Pekerjaan { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -36,6 +39,18 @@ namespace RestAPIProvinsiID.Data
                 .HasOne(s => s.GetStatus)
                 .WithOne(u => u.GetUser)
                 .HasForeignKey<UserModel>(s => s.Status);
+
+            //Foreign Key Tabel Anggota dan Gender
+            modelBuilder.Entity<AnggotaModel>()
+                .HasOne(g => g.GetGender)
+                .WithOne(a => a.GetAnggota)
+                .HasForeignKey<AnggotaModel>(g => g.JenisKelamin);
+
+            //Foreign Key Tabel Anggota dan Pekerjaan
+            modelBuilder.Entity<AnggotaModel>()
+                .HasOne(p => p.GetPekerjaan)
+                .WithOne(a => a.GetAnggota)
+                .HasForeignKey<AnggotaModel>(p => p.Pekerjaan);
         }
 
         /*public virtual DbSet<AksesModel> Akses { get; set; } = null!;

@@ -2,14 +2,14 @@
 using RestAPIProvinsiID.Data;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using RestAPIProvinsiID.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestAPIProvinsiID.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class AnggotaController : ControllerBase
     {
         private readonly Datacontext _datacontext;
         private readonly JsonSerializerOptions options = new JsonSerializerOptions
@@ -18,20 +18,23 @@ namespace RestAPIProvinsiID.Controllers
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
-        public StatusController(Datacontext datacontext)
+        public AnggotaController(Datacontext datacontext)
         {
             _datacontext = datacontext;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<StatusModel>>> GetAllStatus()
+        public async Task<ActionResult<List<AnggotaModel>>> GetAllAnggota()
         {
             var _ok = new OkResult();
-            var result = new StatusResult
+            var result = new AnggotaResult
             {
                 Code = _ok.StatusCode,
                 Message = _ok.GetType().Name,
-                statusModels = await _datacontext.Status.ToListAsync()
+                anggotaModels = await _datacontext.Anggota
+                    .Include(g => g.GetGender)
+                    .Include(p => p.GetPekerjaan)
+                    .ToListAsync()
             };
 
             string jsonString = JsonSerializer.Serialize(result, options);
